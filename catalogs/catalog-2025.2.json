@@ -1,0 +1,270 @@
+{
+  "version": "2025.2",
+  "parts": [
+    {
+      "part_number": "SSD-128",
+      "description": "原厂 128GB SATA SSD（现装件）",
+      "interface": "SATA-3",
+      "voltage": "3.3V",
+      "firmware_min": "1.0.0"
+    },
+    {
+      "part_number": "SSD-256",
+      "description": "原厂 256GB SATA SSD（直换升级件）",
+      "interface": "SATA-3",
+      "voltage": "3.3V",
+      "firmware_min": "1.2.0"
+    },
+    {
+      "part_number": "SSD-512",
+      "description": "512GB NVMe SSD（需 SATA->NVMe 转接）",
+      "interface": "NVMe-4",
+      "voltage": "3.3V",
+      "firmware_min": "1.5.0"
+    },
+    {
+      "part_number": "ADP-SATA-NVME",
+      "description": "SATA-3 -> NVMe-4 转接卡（3.3V 电气域）",
+      "is_adapter": true,
+      "from_interface": "SATA-3",
+      "interface": "NVMe-4",
+      "voltage": "3.3V"
+    },
+    {
+      "part_number": "ADP-SATA-NVME-24V",
+      "description": "SATA-3 -> NVMe-4 转接卡（24V 工业总线，电气不兼容）",
+      "is_adapter": true,
+      "from_interface": "SATA-3",
+      "interface": "NVMe-4",
+      "voltage": "24V"
+    },
+    {
+      "part_number": "BRACKET-M2",
+      "description": "NVMe 安装支架（机械件，无接口/电压）",
+      "voltage": null,
+      "firmware_min": null
+    },
+    {
+      "part_number": "SSD-1024",
+      "description": "1TB NVMe SSD（高固件门槛 + 必须同换支架）",
+      "interface": "NVMe-4",
+      "voltage": "3.3V",
+      "firmware_min": "2.0.0"
+    },
+    {
+      "part_number": "SSD-1024-IND",
+      "description": "1TB NVMe SSD 工业总线版（目录方案使用 24V 转接卡，电气不兼容）",
+      "interface": "NVMe-4",
+      "voltage": "3.3V",
+      "firmware_min": "2.0.0"
+    },
+    {
+      "part_number": "CYC-A",
+      "description": "替代环测试件 A",
+      "interface": "SATA-3",
+      "voltage": "3.3V",
+      "firmware_min": "1.0.0"
+    },
+    {
+      "part_number": "CYC-B",
+      "description": "替代环测试件 B",
+      "interface": "SATA-3",
+      "voltage": "3.3V",
+      "firmware_min": "1.0.0"
+    },
+    {
+      "part_number": "CYC-C",
+      "description": "替代环测试件 C",
+      "interface": "SATA-3",
+      "voltage": "3.3V",
+      "firmware_min": "1.0.0"
+    },
+    {
+      "part_number": "SSD-2048",
+      "description": "2TB NVMe SSD（仅 2025.2 目录引入）",
+      "interface": "NVMe-4",
+      "voltage": "3.3V",
+      "firmware_min": "2.1.0"
+    }
+  ],
+  "chains": [
+    {
+      "from_part": "SSD-128",
+      "to_part": "SSD-256",
+      "note": "同接口直换"
+    },
+    {
+      "from_part": "SSD-128",
+      "to_part": "SSD-512",
+      "adapter_pn": "ADP-SATA-NVME",
+      "note": "接口变更，必须使用 3.3V 转接卡"
+    },
+    {
+      "from_part": "SSD-512",
+      "to_part": "SSD-1024",
+      "adapter_pn": "ADP-SATA-NVME",
+      "extra_parts": [
+        "BRACKET-M2"
+      ],
+      "note": "升级 1TB，转接沿用并需更换 M.2 支架"
+    },
+    {
+      "from_part": "SSD-128",
+      "to_part": "SSD-1024-IND",
+      "adapter_pn": "ADP-SATA-NVME-24V",
+      "note": "目录中记录的工业总线转接方案（24V，应被电压校验拒绝）"
+    },
+    {
+      "from_part": "CYC-A",
+      "to_part": "CYC-B",
+      "note": "环边 1"
+    },
+    {
+      "from_part": "CYC-B",
+      "to_part": "CYC-C",
+      "note": "环边 2"
+    },
+    {
+      "from_part": "CYC-C",
+      "to_part": "CYC-A",
+      "note": "环边 3（闭环）"
+    },
+    {
+      "from_part": "SSD-512",
+      "to_part": "SSD-2048",
+      "adapter_pn": "ADP-SATA-NVME",
+      "extra_parts": [
+        "BRACKET-M2"
+      ],
+      "note": "2025.2 新增：512 槽位可继续升至 2TB"
+    }
+  ],
+  "devices": [
+    {
+      "model": "TERM-A7",
+      "revisions": [
+        {
+          "revision": "REV-1",
+          "slot": "main",
+          "interfaces": [
+            "SATA-3"
+          ],
+          "voltage": "3.3V"
+        },
+        {
+          "revision": "REV-2",
+          "slot": "main",
+          "interfaces": [
+            "SATA-3",
+            "NVMe-4"
+          ],
+          "voltage": "3.3V"
+        }
+      ]
+    }
+  ],
+  "fault_rules": [
+    {
+      "rule_id": "R-F001-REPAIR",
+      "fault_code": "F001",
+      "priority": 20,
+      "conclusion": "repairable",
+      "required_measurements": [
+        "smart_log"
+      ],
+      "conditions": [
+        {
+          "measurement": "smart_log",
+          "op": "eq",
+          "value": "complete"
+        }
+      ],
+      "message": "SMART 诊断完整，存储故障允许按替代链维修"
+    },
+    {
+      "rule_id": "R-F001-NEEDDATA",
+      "fault_code": "F001",
+      "priority": 20,
+      "conclusion": "need_data",
+      "required_measurements": [
+        "smart_log"
+      ],
+      "conditions": [
+        {
+          "measurement": "smart_log",
+          "op": "eq",
+          "value": "pending"
+        }
+      ],
+      "message": "SMART 自检尚未完成，需补充数据后再判定"
+    },
+    {
+      "rule_id": "R-F002-REPAIR",
+      "fault_code": "F002",
+      "priority": 20,
+      "conclusion": "repairable",
+      "required_measurements": [
+        "vibration_mm_s"
+      ],
+      "conditions": [
+        {
+          "measurement": "vibration_mm_s",
+          "op": "gt",
+          "value": 2
+        }
+      ],
+      "message": "振动超标，判定可维修（减震更换）"
+    },
+    {
+      "rule_id": "R-F002-FORBID",
+      "fault_code": "F002",
+      "priority": 20,
+      "conclusion": "forbidden",
+      "required_measurements": [
+        "vibration_mm_s"
+      ],
+      "conditions": [
+        {
+          "measurement": "vibration_mm_s",
+          "op": "gt",
+          "value": 2
+        }
+      ],
+      "message": "同优先级冲突规则：振动超标禁止维修（结构疲劳）"
+    },
+    {
+      "rule_id": "R-F003-FORBID",
+      "fault_code": "F003",
+      "priority": 30,
+      "conclusion": "forbidden",
+      "required_measurements": [
+        "temperature_c"
+      ],
+      "conditions": [
+        {
+          "measurement": "temperature_c",
+          "op": "gt",
+          "value": 85
+        }
+      ],
+      "message": "温度超过 85C，禁止维修（热失控风险）"
+    },
+    {
+      "rule_id": "R-F004-REPAIR",
+      "fault_code": "F004",
+      "priority": 10,
+      "conclusion": "repairable",
+      "required_measurements": [
+        "shock_test"
+      ],
+      "conditions": [
+        {
+          "measurement": "shock_test",
+          "op": "eq",
+          "value": "passed"
+        }
+      ],
+      "message": "2025.2 新增故障代码：跌落冲击复检通过，允许维修"
+    }
+  ]
+}
